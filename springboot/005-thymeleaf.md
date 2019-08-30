@@ -1,4 +1,4 @@
-## 4. thymeleaf模板
+## 5. thymeleaf模板
 
 1. **pom.xml**引入依赖
 ```

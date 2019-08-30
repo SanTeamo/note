@@ -1,4 +1,4 @@
-## 2. 自定义 Filter
+## 3. 自定义 Filter
 > 1. 实现 Filter 接口，实现 Filter 方法aa
 > 2. 添加 `@Configuration` 注解，将自定义Filter加入过滤链
 
