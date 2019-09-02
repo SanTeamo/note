@@ -1,7 +1,7 @@
 ## 1、SpringMVC接收数组 ##
 
 #### 可以使用JS模块封装好的**bingThis**函数，设置一个属性名进行提交   
-```
+```javascript
 delBtn: function() {
     var grid = mini.get("datagrid1");
     var rows = grid.getSelecteds();
@@ -34,7 +34,7 @@ delStu: function(ids){
 },
 ``` 
 #### 使用SpringMVC注解@RequestParam
-```
+```java
 @RequestMapping(value = "/delStudent", method = {RequestMethod.POST})
 @ResponseBody
 public JsonResult delStudent(@RequestParam(value = "ids[]")Integer[] ids) {
@@ -46,7 +46,7 @@ public JsonResult delStudent(@RequestParam(value = "ids[]")Integer[] ids) {
 ## 2、Oracle数据库分页查询
 
 * 物理分页使用**ROWNUM**，控制**ROMNUM**的范围来实现分页。
-```
+```sql
 SELECT *
 FROM (SELECT a.*,ROWNUM RN FROM TEST_STU a)
 WHERE RN > 0 AND RN <= 10)
@@ -74,7 +74,7 @@ ${}方式一般用于传入数据库对象，例如传入表名，不能防止sq
 模糊查询中，如果使用如下方式：select * from reason_detail where reason_en like '%${reason}%'，
 此处只能使用$，使用#的话，反而会被解析为列，报错java.sql.SQLException: Column 'reason' not found**
 
-```
+```sql
 SELECT *
 FROM (SELECT A.*,ROWNUM RN
 FROM TEST_STU A
@@ -90,11 +90,11 @@ WHERE RN > #{pageIndex}*#{pageSize} AND RN <= #{pageIndex}*#{pageSize}+#{pageSiz
 #### 类似于分页查询中的ORDER BY
 
 * 第一种 **concat**
-```
+```sql
 SELECT * FROM TEST_STU WHERE NAME LIKE CONCAT(CONCAT('%',#{NAME}),'%')
 ```
 * 第二种 **||**
-```
+```sql
 SELECT * FROM TEST_STU WHERE NAME LIKE '%' || #{NAME} || '%'
 ```
 
@@ -106,7 +106,7 @@ SELECT * FROM TEST_STU WHERE NAME LIKE '%' || #{NAME} || '%'
 
 
 * 正确的写法
-```
+```xml
 <select id="getStudentCount" resultType="java.lang.Integer">
     SELECT COUNT(*)
     FROM TEST_STU
@@ -117,7 +117,7 @@ SELECT * FROM TEST_STU WHERE NAME LIKE '%' || #{NAME} || '%'
 ```
   
 * 错误的写法
-```
+```xml
 <select id="getStudentCount" resultType="java.lang.Integer">
     SELECT COUNT(*)
     FROM TEST_STU
@@ -128,7 +128,7 @@ SELECT * FROM TEST_STU WHERE NAME LIKE '%' || #{NAME} || '%'
 ```
 
 * 也可以在mapper的接口中，给这个方法的参数加上@Param(value=“id”)，这样就能在.xml中使用#{key,jdbcType=VARCHAR} 了。
-```
+```java
 int getStudentCount(@Param("key") String key);
 ```
 
@@ -137,7 +137,7 @@ int getStudentCount(@Param("key") String key);
 #### 是一个构造函数，用来返回一个链式实用对象方法来注册多个回调，并且调用回调队列，传递任何同步或异步功能成功或失败的状态
 
 - 用例1
-```
+```js
     // Existing object
 var obj = {
 	hello: function( name ) {
@@ -160,7 +160,7 @@ obj.done(function( name ) {
 }).hello( "Karl" );
 ```
 - 用例2
-```
+```js
 function asyncEvent() {
 	var dfd = jQuery.Deferred();
 
@@ -201,7 +201,7 @@ $.when( asyncEvent() ).then(
 
 ## 6、箭头函数
 
-```
+```js
 var elements = [
   'Hydrogen',
   'Helium',
@@ -233,7 +233,7 @@ elements.map(({ "length": lengthFooBArX }) => lengthFooBArX); // [8, 6, 7, 9]
 ```
 - 递归
 
-```
+```js
 var fact = (x) => ( x==0 ?  1 : x*fact(x-1) );
 
 alert(fact(5));
