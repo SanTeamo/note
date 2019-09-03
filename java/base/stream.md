@@ -21,38 +21,34 @@ stream的特性
 
 ## 生成流 ##
 
-1. 集合
-Collection.stream
-```
+1. 集合 Collection.stream
+```java
 List<Integer> integerList = Arrays.asList(1,2,3,4,5);
 Stream stream1 = integerList.stream();
 ```
-2. 数组
-Arrays.stream
-```
+2. 数组 Arrays.stream
+```java
 Integer[] integers = new Integer[]{1,2,3,4,5};
 Stream<Integer> stream2 = Arrays.stream(integers);
 ```
 3. Stream 静态方法
 
  - Stream.of
-```
+```java
 Stream<Integer> stream3 = Stream.of(1,2,3,4,5);
 ```
- - Stream.iterate
-    无限流
-```
+ - Stream.iterate 无限流
+```java
 Stream<Integer> stream4 = Stream.iterate(0,(x)->x+2);
 ```
- - Stream.generate
-    无限流
-```
+ - Stream.generate 无限流
+```java
 Stream<Double> stream5 = Stream.generate(Math::random);
 ```
 
 ## 操作流 ##
 初始化一个集合
-```
+```java
 static List<Student> userList = new ArrayList<>();
 
 static {
@@ -78,7 +74,7 @@ static {
 ```
 ### forEach ###
 迭代流中数据
-```
+```java
 @Test
 public void forEachTest(){
     userList.stream().forEach(System.out::println);
@@ -87,7 +83,7 @@ public void forEachTest(){
 
 ### filter ###
 留下满足filter()中条件的元素。
-```
+```java
 @Test
 public void filterTest(){
     userList.stream().filter(student -> student.getScore()>80).forEach(System.out::println);
@@ -95,7 +91,7 @@ public void filterTest(){
 ```
 ### sorted ###
 对流进行排序
-```
+```java
 @Test
 public void sortTest(){
     userList.stream().sorted(Comparator.comparing(Student::getScore).reversed()).forEach(System.out::println);
@@ -103,7 +99,7 @@ public void sortTest(){
 ```
 ### map ###
 转换流，将一种类型的流转换为另外一种流
-```
+```java
 @Test
 public void mapTest(){
     String[] arr = new String[]{"yes", "YES", "no", "NO"};
@@ -111,7 +107,7 @@ public void mapTest(){
 }
 ```
 ### Collectors ###
-```
+```java
 @Test
 public void collectTest(){
     List<Student> list = userList.stream().filter(s -> s.getScore()>70).collect(Collectors.toList());
@@ -120,7 +116,7 @@ public void collectTest(){
 ```
 ### 提取，组合 ###
 
-```
+```java
 @Before
 public void init(){
     arr1 = new String[]{"a","b","c","d"};
@@ -140,7 +136,7 @@ public void testLimit(){
  */
 @Test
 public void testSkip(){
-//        Stream.of(arr1).skip(2).limit(2).forEach(System.out::println);
+//  Stream.of(arr1).skip(2).limit(2).forEach(System.out::println);
     Stream.iterate(1,x->x+2).skip(1).limit(5).forEach(System.out::println);
 }
 
