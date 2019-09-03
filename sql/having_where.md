@@ -1,4 +1,4 @@
-##1. HAVING vs WHERE
+## HAVING vs WHERE
 `WHERE` 的执行要优先于 `GROUP BY`，`HAVING` 的执行在 `GROUP BY` 之后
 
 假设有一个表:
@@ -33,4 +33,3 @@ SELECT `value` v FROM `table` HAVING `v`>5; -- Get 5 rows
 这是因为 `WHERE` 在 `SELECT` **之前**筛选数据，而 `HAVING` 在 `SELECT` **之后**过滤结果数据。
 
 在一个表中有许多列数据时，在条件中使用 `WHERE` 将会**更高效**。
-##2. WHERE
