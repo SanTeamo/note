@@ -53,11 +53,11 @@
     127.0.0.1 register-master
     ```
 
-    application-default.yml
+    application-single-node.yml
     ```yml
     spring:
-      # profile=default
-      profiles: default
+      # profile = single-node
+      profiles: single-node
     server:
       port: 8760
     eureka:
@@ -129,7 +129,7 @@
 
     ![Image text](https://raw.githubusercontent.com/SanTeamo/note/master/picture/java/springcloud/002/eureka-client-register.png)
 
-#### eureka集群
+#### eureka注册中心集群
 
 1. 配置文件
 
@@ -187,15 +187,12 @@
     分别访问`register-master:8760`、`register-slave1:8761`、`register-slave2:8762`，可以看到它们之间有相互的信息。
 
     register-master
-
     ![Image text](https://raw.githubusercontent.com/SanTeamo/note/master/picture/java/springcloud/002/master-cluster-info.png)
 
     register-slave1
-
     ![Image text](https://raw.githubusercontent.com/SanTeamo/note/master/picture/java/springcloud/002/slave1-cluster-info.png)
 
     register-slave2
-
     ![Image text](https://raw.githubusercontent.com/SanTeamo/note/master/picture/java/springcloud/002/slave2-cluster-info.png)
 
     此时再启动微服务
