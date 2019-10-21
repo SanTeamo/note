@@ -151,7 +151,7 @@ Spring Cloud Ribbon是一个基于HTTP和TCP的客户端负载均衡工具，它
 
     访问`ribbon-service:8777`，会发现返回的字符串会不断变化
 
-    ![Image text](https://raw.githubusercontent.com/SanTeamo/note/master/picture/java/springcloud/003/ribbon2.jpg)
+    ![Image text](https://raw.githubusercontent.com/SanTeamo/note/master/picture/java/springcloud/003/ribbon1.jpg)
 
     ![Image text](https://raw.githubusercontent.com/SanTeamo/note/master/picture/java/springcloud/003/ribbon2.jpg)
 
