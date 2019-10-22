@@ -12,13 +12,18 @@ Spring Cloud Ribbon是一个基于HTTP和TCP的客户端负载均衡工具，它
 
 1. 配置文件
     
-    application-service1.yml
+    application.yml
     ```yml
     spring:
       application:
-        #应用名称
+      #应用名称
         name: eureka-client
-    profiles:
+    ```
+
+    application-service1.yml
+    ```yml
+    spring:
+      profiles:
         service1
     server:
       port: 8761
@@ -32,10 +37,7 @@ Spring Cloud Ribbon是一个基于HTTP和TCP的客户端负载均衡工具，它
     application-service2.yml
     ```yml
     spring:
-      application:
-        #应用名称
-        name: eureka-client
-    profiles:
+      profiles:
         service2
     server:
       port: 8762
