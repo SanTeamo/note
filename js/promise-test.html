@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<body>
+		<div id="span"></div>
+	</body>
+	<script src="./jquery-1.9.1.min.js"></script>
+	<script>
+		
+		let btnState = true;
+		
+		function eventA (param) {
+			let def = $.Deferred();
+			eventB(param)
+			.then(
+			d => {
+				console.log('eventA, then, d => ' + d);
+				def.resolve(d);
+			}
+			).catch(
+			e => {
+				console.log('eventA, catch, e => ' + e);
+				def.reject(e);
+			}
+			)
+			return def.promise();
+		}
+		
+		function eventB (param) {
+			return new Promise(
+				function(resolve, reject) {
+					param = $.trim(param);
+					let num = Number(param);
+					if (param !== '' && !isNaN(num)) {
+						setTimeout(
+							function() {
+								resolve(num);
+							},
+							2000
+						)
+					} else {
+						reject('invalid Number ==> ' + param);
+					}
+				}
+			);
+		}
+		
+		async function test() {
+			let span = $('#span');
+			btnState = false;
+			span.append('before eventA, btnState => ' + btnState);
+			try {
+				await eventA('1000');
+			} catch (e){
+				console.log(e);
+				span.append('<br/><span style="color: red;">test, catch, btnState => ' + btnState + '</sapn>');
+			} finally {
+				btnState = true;
+				span.append('<br/>test, finally, btnState => ' + btnState);
+			}
+			span.append('<br/>after eventA, btnState => ' + btnState);
+		}
+		
+		test();
+	</script>
+</html>
