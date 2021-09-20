@@ -10,3 +10,8 @@
 .success-color {
     color: #67c23a;
 }
+
+.picture-75 {
+    width: 75%;
+    margin: 0 auto;
+}
