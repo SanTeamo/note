@@ -169,7 +169,7 @@ select * from t where (a between 1 and 1000)  and (b between 50000 and 100000) o
 </div>
 
 可以看到，这次优化器选择了索引 b，rows 字段显示需要扫描 50198 行。所以：
-1. 扫描的行数估计值
+1. 扫描的行数估计值依然不准确
 2. MySQL 又选择错了索引
 
 ## 索引选择异常和处理
