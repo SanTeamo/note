@@ -1,9 +1,10 @@
 # SQL更新语句的执行
 
-更新流程射击两个重要日志模块：```redo log```（重做日志） 和 ```binlog```（归档日志）
+更新流程涉及两个重要日志模块：```redo log```（重做日志） 和 ```binlog```（归档日志）
+
 ## 为何有两种日志？
 > 因为最开始MySQL没有```InnoDB引擎```，自带引擎是 ```MyISAM```，而```MyISAM```没有```crash-safe```的能力，```binlog```只能用于归档。```InnoDB引擎```是另一家公司以插件形式引入MySQL的
-> 
+
 ## 两种日志有以下不同
 1. redo log是InnoDB引擎特有的；binlog是MySQL的Server层实现，所有引擎都可以使用
 2. redo log是物理日志，记录的是“在某个页面做了什么修改”；binlog是逻辑日志，记录的是这个语句的原始逻辑，比如“给ID=2这一行的c字段加1”
@@ -54,9 +55,9 @@ redo log 和 binlog 具有关联行，在恢复数据时，redo log 用于恢复
 真正的“两阶段提交” 是指对 redo log 进行“两阶段提交”：先 prepare，再commit。 数据库 crash-重启后，会对记录对redo log 进行check： 1、如果 redo log 已经commit，则视为有效。 2、如果 redo log prepare 但未commit，则check对应的bin log记录是否记录成功。 2.1、bin log记录成功则将该prepare状态的redo log视为有效 2.2、bin log记录不成功则将该prepare状态的redo log视为无效
 
 > 如果不使用两阶段提交，假设更新 ID = 2 行的 c 字段从0到1
-> - 先写 redo log 再写 binlog。
+> - 先写 redo log 再写 binlog
 >> 假设在 redo log 写完，binlog 未写完时 MySQL 异常重启。此时恢复数据，使用 redo log 会让 c 恢复为1。但是此时 binlog 未记录，如果使用 binlog 来恢复临时库时，恢复出来的 c 这一行就是0，不一致。
-> - 先写 binlog 再写 binlog。
+> - 先写 binlog 再写 redo log
 >> 我如果在binlog写完后 crash，由于 redo log 还没写，崩溃恢复后这个事务无效，c 还是0。但是由于 binlog 记录了更新 c 为 1 的操作，此时恢复出来的数据多了一个事务，与原库的值不一致。
 
 ## 参数
