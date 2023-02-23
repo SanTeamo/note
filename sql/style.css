@@ -3,6 +3,10 @@
     font-weight: bold;
 }
 
+.bold {
+    font-weight: bolder;
+}
+
 .text-center {
     text-align: center;
 }
