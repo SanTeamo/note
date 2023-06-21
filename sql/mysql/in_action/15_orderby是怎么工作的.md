@@ -229,4 +229,48 @@ alter table t add index city_user_age(city, name, age);
 
 可以看到，Extra 字段里面多了 “Using index”，表示的就是使用了覆盖索引，性能上会快很多。
 
+## 问题
+
+假设你的表里面已经有了 city_name(city, name) 这个联合索引，然后你要查杭州和苏州两个城市中所有的市民的姓名，并且按名字排序，显示前 100 条记录。如果 SQL 查询语句是这么写的 
+
+```sql
+select * from t where city in ('杭州',"苏州") order by name limit 100;
+```
+
+那么，这个语句执行的时候会有排序过程吗，为什么？
+
+如果业务端代码由你来开发，需要实现一个在数据库端不需要排序的方案，你会怎么实现呢？
+
+进一步地，如果有分页需求，要显示第 101 页，也就是说语句最后要改成 “limit 10000,100”， 你的实现方法又会是什么呢？
+
+
+虽然有 (city,name) 联合索引，对于单个 city 内部，name 是递增的。但是由于这条 SQL 语句不是要单独地查一个 city 的值，而是同时查了"杭州"和" 苏州 "两个城市，因此所有满足条件的 name 就不是递增的了。也就是说，这条 SQL 语句需要排序。
+
+那怎么避免排序呢？
+
+这里，我们要用到 (city,name) 联合索引的特性，把这一条语句拆成两条语句，执行流程如下：
+1. 执行 select * from t where city=“杭州” order by name limit 100; 这个语句是不需要排序的，客户端用一个长度为 100 的内存数组 A 保存结果。
+2. 执行 select * from t where city=“苏州” order by name limit 100; 用相同的方法，假设结果被存进了内存数组 B。
+3. 现在 A 和 B 是两个有序数组，然后你可以用归并排序的思想，得到 name 最小的前 100 值，就是我们需要的结果了。
+
+如果把这条 SQL 语句里“limit 100”改成“limit 10000,100”的话，处理方式其实也差不多，即：要把上面的两条语句改成写：
+
+```sql
+select * from t where city="杭州" order by name limit 10100; 
+select * from t where city="苏州" order by name limit 10100; 
+```
+
+这时候数据量较大，可以同时起两个连接一行行读结果，用归并排序算法拿到这两个结果集里，按顺序取第 10001~10100 的 name 值，就是需要的结果了。
+
+当然这个方案有一个明显的损失，就是从数据库返回给客户端的数据量变大了。
+
+所以，如果数据的单行比较大的话，可以考虑把这两条 SQL 语句改成下面这种写法：
+
+```sql
+select id,name from t where city="杭州" order by name limit 10100; 
+select id,name from t where city="苏州" order by name limit 10100; 
+```
+
+然后，再用归并排序的方法取得按 name 顺序第 10001~10100 的 name、id 的值，然后拿着这 100 个 id 到数据库中去查出所有记录。
+
 <link rel="stylesheet" type="text/css" href="../../style.css" />
