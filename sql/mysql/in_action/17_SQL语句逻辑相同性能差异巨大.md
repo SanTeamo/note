@@ -121,6 +121,8 @@ select * from tradelog where id="83126";
 
 你可以先自己分析一下，再到数据库里面去验证确认。
 
+> <span class="success-color">如果 id 的类型是整数，传入的参数类型是字符串的时候，可以用上索引</span>。
+
 
 ## 案例三：隐式字符编码转换
 
@@ -272,5 +274,39 @@ where d.tradeid=CONVERT(l.tradeid USING utf8) and l.id=2;
 ## 小结
 
 三个例子，其实是在说同一件事儿，即：<span class="success-color font-strong">对索引字段做函数操作，可能会破坏索引值的有序性，因此优化器就决定放弃走树搜索功能</span>。
+
+表结构如下
+```sql
+CREATE TABLE `table_a` (
+  `id` int(11) NOT NULL,
+  `b` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `b` (`b`)
+) ENGINE=InnoDB;
+```
+
+假设现在表里面，有 100 万行数据，其中有 10 万行数据的 b 的值是’1234567890’， 假设现在执行语句是这么写的:
+
+```sql
+select * from table_a where b='1234567890abcd';
+```
+
+这时候，MySQL 会怎么执行呢？
+
+最理想的情况是，MySQL 看到字段 b 定义的是 varchar(10)，那肯定返回空呀。可惜，MySQL 并没有这么做。
+
+那要不，就是把’1234567890abcd’拿到索引里面去做匹配，肯定也没能够快速判断出索引树 b 上并没有这个值，也很快就能返回空结果。
+
+但实际上，MySQL 也不是这么做的。
+
+这条 SQL 语句的执行很慢，流程是这样的：
+
+1. 在传给引擎执行的时候，做了字符截断。因为引擎里面这个行只定义了长度是 10，所以只截了前 10 个字节，就是’1234567890’进去做匹配；
+2. 这样满足条件的数据有 10 万行；
+3. 因为是 select *， 所以要做 10 万次回表；
+4. 但是每次回表以后查出整行，到 server 层一判断，b 的值都不是’1234567890abcd’;
+5. 返回结果是空。
+
+这个例子，是我们文章内容的一个很好的补充。<span class="success-color">虽然执行过程中可能经过函数操作，但是最终在拿到结果后，server 层还是要做一轮判断的</span>。
 
 <link rel="stylesheet" type="text/css" href="../../style.css" />
